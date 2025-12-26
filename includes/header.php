@@ -88,7 +88,7 @@
     </style>
 </head>
 <body>
-    <?php include 'navigation.php'; ?>
+    <?php include __DIR__.'navigation.php'; ?>
     
     <?php 
     // Hiển thị flash message nếu có
