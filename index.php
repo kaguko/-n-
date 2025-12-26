@@ -37,6 +37,49 @@ if (!in_array($page, $allowed_pages)) {
 // Build page file path
 $page_file = __DIR__ . "/pages/{$page}.php";
 
+// Xử lý các trang có redirect/logic trước (không output HTML)
+$no_layout_pages = ['logout', 'add-to-cart'];
+if (in_array($page, $no_layout_pages)) {
+    if (file_exists($page_file)) {
+        include $page_file;
+        exit(); // Dừng ngay sau khi xử lý
+    }
+}
+
+// Xử lý login POST trước khi include header (để tránh lỗi headers already sent)
+if ($page === 'login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (file_exists($page_file)) {
+        include $page_file;
+        exit();
+    }
+}
+
+// Xử lý register POST trước khi include header
+if ($page === 'register' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (file_exists($page_file)) {
+        include $page_file;
+        exit();
+    }
+}
+
+// Xử lý checkout POST hoặc giỏ hàng trống trước khi include header
+if ($page === 'checkout') {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' || empty(get_cart())) {
+        if (file_exists($page_file)) {
+            include $page_file;
+            exit();
+        }
+    }
+}
+
+// Xử lý cart POST trước khi include header
+if ($page === 'cart' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (file_exists($page_file)) {
+        include $page_file;
+        exit();
+    }
+}
+
 // Include header
 include 'includes/header.php';
 
